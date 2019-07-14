@@ -1,0 +1,25 @@
+{
+  "name": "rx-machine",
+  "version": "1.0.0",
+  "description": "_Water meets metal_",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "jest",
+    "dev": "jest --watch",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "Marcus Rådell",
+  "license": "MIT",
+  "dependencies": {
+    "rxjs": "^6.5.2",
+    "typescript": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.15",
+    "jest": "^24.8.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "ts-lint": "^4.5.1"
+  }
+}
