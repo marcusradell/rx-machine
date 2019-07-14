@@ -7,9 +7,10 @@ test("createAction", async () => {
     ctx: string;
   };
 
-  const setValue = createAction((s: Store, ctx: string) => ({ ...s, ctx }));
+  const reducer = (s: Store, ctx: string) => ({ ...s, ctx });
+  const setValue = createAction(reducer);
   const resultP = setValue.actionStream.pipe(take(1)).toPromise();
   setValue.trigger("Hello!");
 
-  expect(await resultP).toEqual("Hello!!");
+  expect(await resultP).toEqual("Hello!");
 });
