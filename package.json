@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "_Water meets metal_",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest",
     "dev": "jest --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublish": "tsc"
   },
   "keywords": [],
   "author": "Marcus Rådell",
