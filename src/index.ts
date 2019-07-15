@@ -1,2 +1,2 @@
-export * from "./model";
+export * from "./rxm";
 export * from "./types";

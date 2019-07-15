@@ -9,7 +9,7 @@ test("createAction", async () => {
 
   const reducer = (s: Store, ctx: string) => ({ ...s, ctx });
   const setValue = createAction(reducer);
-  const resultP = setValue.actionStream.pipe(take(1)).toPromise();
+  const resultP = setValue.stream.pipe(take(1)).toPromise();
   setValue.trigger("Hello!");
 
   expect(await resultP).toEqual("Hello!");

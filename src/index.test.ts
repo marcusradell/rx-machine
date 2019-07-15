@@ -1,38 +1,51 @@
 import { createRxm } from "./index";
 import { skip, take } from "rxjs/operators";
+import { createAction } from "./create-action";
 
-test("createMachine", async () => {
-  const chart = {
-    initial: {
-      end: (s: Store, ctx: string): Store => ({
+test("createRxm", async () => {
+  type Chart = {
+    started: ["end"];
+    ended: ["restart"];
+  };
+
+  type StartedStore = {
+    state: "started";
+    ctx: number;
+  };
+
+  type EndedStore = {
+    state: "ended";
+    ctx: number;
+  };
+
+  type Store = StartedStore | EndedStore;
+
+  const chart: Chart = {
+    started: ["end"],
+    ended: ["restart"]
+  };
+
+  const actions = {
+    end: createAction(
+      (s: Store, ctx: number): Store => ({
         state: "ended",
         ctx
       })
-    },
-    ended: {
-      restart: (s: Store, ctx: number): Store => ({
-        state: "initial",
+    ),
+    restart: createAction(
+      (s: Store, ctx: number): Store => ({
+        state: "started",
         ctx
       })
-    }
+    )
   };
 
-  type Store =
-    | {
-        state: "initial";
-        ctx: number;
-      }
-    | {
-        state: "ended";
-        ctx: string;
-      };
-
-  const initialStore = {
-    state: "initial",
+  const initialStore: Store = {
+    state: "started",
     ctx: 123
   } as Store;
 
-  const { machine, store } = createRxm(chart, initialStore);
+  const { store } = createRxm(chart, initialStore, actions);
 
   const result = store
     .pipe(
@@ -41,7 +54,7 @@ test("createMachine", async () => {
     )
     .toPromise();
 
-  machine.initial.end.trigger("foo");
+  actions.end.trigger(1);
 
-  expect(await result).toEqual({ state: "ended", ctx: "foo" });
+  expect(await result).toEqual({ state: "ended", ctx: 1 });
 });

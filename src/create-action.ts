@@ -7,7 +7,7 @@ export function createAction<Store, Ctx>(
 
   return {
     trigger: (ctx: Ctx) => subject.next(ctx),
-    actionStream: subject.asObservable(),
+    stream: subject.asObservable(),
     reducer
   };
 }
