@@ -1,6 +1,5 @@
-import { createRxm } from "./index";
+import { createAction, createRxm } from "./index";
 import { skip, take } from "rxjs/operators";
-import { createAction } from "./create-action";
 
 test("createRxm", async () => {
   type Chart = {

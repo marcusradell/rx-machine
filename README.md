@@ -7,45 +7,64 @@ RxMachine was created to get the stable setup of a `state machine` coupled with 
 ## Example usage
 
 ```ts
-import { createMachine, Reducer } from "./index";
+import { createRxm } from "./index";
+import { skip, take } from "rxjs/operators";
+import { createAction } from "./create-action";
 
-const chart = {
-  initial: {
-    end: (s: Store, ctx: string): Store => ({
-      state: "ended",
-      ctx
-    })
-  },
-  ended: {
-    restart: (s: Store, ctx: number): Store => ({
-      state: "initial",
-      ctx
-    })
-  }
-};
+test("createRxm", async () => {
+  type Chart = {
+    started: ["end"];
+    ended: ["restart"];
+  };
 
-type Store =
-  | {
-      state: "initial";
-      ctx: number;
-    }
-  | {
-      state: "ended";
-      ctx: string;
-    };
+  type StartedStore = {
+    state: "started";
+    ctx: number;
+  };
 
-const initialStore = {
-  state: "initial",
-  ctx: 123
-} as Store;
+  type EndedStore = {
+    state: "ended";
+    ctx: number;
+  };
 
-const { machine, store } = createMachine(chart, initialStore);
+  type Store = StartedStore | EndedStore;
 
-store
-  .forEach(s => {
-    if (s.state !== "initial") return;
+  const chart: Chart = {
+    started: ["end"],
+    ended: ["restart"]
+  };
 
-    machine[s.state].end.trigger("foo");
-  })
-  .catch(e => console.error(e));
+  const actions = {
+    end: createAction(
+      (s: Store, ctx: number): Store => ({
+        state: "ended",
+        ctx
+      })
+    ),
+    restart: createAction(
+      (s: Store, ctx: number): Store => ({
+        state: "started",
+        ctx
+      })
+    )
+  };
+
+  const initialStore: Store = {
+    state: "started",
+    ctx: 123
+  } as Store;
+
+  const { store } = createRxm(chart, initialStore, actions);
+
+  const result = store
+    .pipe(
+      skip(1),
+      take(1)
+    )
+    .toPromise();
+
+  actions.end.trigger(1);
+
+  expect(await result).toEqual({ state: "ended", ctx: 1 });
+});
 ```
