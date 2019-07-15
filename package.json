@@ -12,6 +12,8 @@
   "author": "Marcus Rådell",
   "license": "MIT",
   "dependencies": {
+    "@types/react": "^16.8.23",
+    "react": "^16.8.6",
     "rxjs": "^6.5.2",
     "typescript": "^3.4.5"
   },
