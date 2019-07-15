@@ -1,4 +1,4 @@
-import { createAction, createRxm } from "./index";
+import { createAction, createStore } from "./index";
 import { skip, take } from "rxjs/operators";
 
 test("createRxm", async () => {
@@ -44,7 +44,7 @@ test("createRxm", async () => {
     ctx: 123
   } as Store;
 
-  const { store } = createRxm(chart, initialStore, actions);
+  const store = createStore(chart, initialStore, actions);
 
   const result = store
     .pipe(

@@ -10,7 +10,7 @@ import {
 import { Action } from "./types";
 export * from "./types";
 
-function createStore<
+export function createStore<
   Chart extends { [k: string]: Array<keyof Actions> },
   Store extends { state: keyof Chart },
   Actions extends { [k: string]: Action<Store, any> }
@@ -53,16 +53,4 @@ function createStore<
   );
 
   return store;
-}
-
-export function createRxm<
-  Chart extends {
-    [k: string]: Array<keyof Actions>;
-  },
-  Store extends { state: keyof Chart },
-  Actions extends { [k: string]: Action<Store, any> }
->(chart: Chart, initialStore: Store, actions: Actions) {
-  const store = createStore(chart, initialStore, actions);
-
-  return { store };
 }
