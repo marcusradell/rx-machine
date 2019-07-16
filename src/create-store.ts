@@ -13,7 +13,7 @@ export * from "./types";
 export function createStore<
   Chart extends { [k: string]: Array<keyof Actions> },
   Store extends { state: keyof Chart },
-  Actions extends { [k: string]: Action<Store, any> }
+  Actions extends { [k: string]: Action<Store, any, any> }
 >(chart: Chart, initialStore: Store, actions: Actions) {
   const chartKeys = Object.keys(chart) as Array<keyof Chart>;
   const updaters = chartKeys.reduce(
