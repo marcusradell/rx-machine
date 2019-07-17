@@ -8,13 +8,8 @@ export function useStore<Store>(
   const [store, setStore] = useState(initialStore);
 
   useEffect(() => {
-    const subscription = storeStream.subscribe(store => {
-      setStore(store);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    const subscription = storeStream.subscribe(store => setStore(store));
+    return () => subscription.unsubscribe();
   }, []);
 
   return store;
