@@ -9,3 +9,11 @@ export type Action<Store, ReturnStore, Context = void> = {
   stream: Observable<Context>;
   reducer: Reducer<Store, ReturnStore, Context>;
 };
+
+export type CreateAction<T extends (s: any, ctx?: any) => any> = T extends (
+  s: infer TStore
+) => infer TReturnStore
+  ? Action<TStore, TReturnStore>
+  : T extends (s: infer TStore, ctx: infer TContext) => infer TReturnStore
+  ? Action<TStore, TReturnStore, TContext>
+  : never;

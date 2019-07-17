@@ -1,4 +1,4 @@
-import { createAction, createStore, Action } from "./index";
+import { createAction, createStore, Action, CreateAction } from "./index";
 import { skip, take } from "rxjs/operators";
 
 test("createStore", async () => {
@@ -53,9 +53,9 @@ test("createStore", async () => {
   });
 
   type Actions = {
-    count: Action<Store, CountingStore, number>;
-    end: Action<Store, EndedStore>;
-    restart: Action<Store, StartedStore>;
+    count: CreateAction<CountReducer>;
+    end: CreateAction<EndReducer>;
+    restart: CreateAction<RestartReducer>;
   };
 
   const actions: Actions = {
