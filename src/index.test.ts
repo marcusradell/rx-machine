@@ -81,8 +81,8 @@ test("createStore", async () => {
       take(1)
     )
     .toPromise();
-  actions.count.trigger(5);
-  actions.end.trigger();
+  actions.count.act(5);
+  actions.end.act();
 
   expect(await result).toEqual({ state: "ended", ctx: 5 });
 });

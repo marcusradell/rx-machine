@@ -10,6 +10,7 @@ import {
 import { Action } from "./types";
 export * from "./types";
 
+// TODO: Chart keys and Store["state"] should strictly match.
 export function createStore<
   Chart extends { [k: string]: Array<keyof Actions> },
   Store extends { state: keyof Chart },

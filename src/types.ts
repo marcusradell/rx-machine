@@ -5,7 +5,7 @@ export type Reducer<Store, ReturnStore, Context = void> =
   | ((s: Store, a: Context) => ReturnStore);
 
 export type Action<Store, ReturnStore, Context = void> = {
-  trigger: (() => void) | ((ctx: Context) => void);
+  act: (() => void) | ((ctx: Context) => void);
   stream: Observable<Context>;
   reducer: Reducer<Store, ReturnStore, Context>;
 };

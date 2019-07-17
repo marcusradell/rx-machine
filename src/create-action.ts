@@ -6,7 +6,7 @@ export function createAction<Store, ReturnStore, Context = void>(
 ): Action<Store, ReturnStore, Context> {
   const subject = new Subject<Context>();
   const result: Action<Store, ReturnStore, Context> = {
-    trigger: (ctx: Context) => subject.next(ctx),
+    act: (ctx: Context) => subject.next(ctx),
     stream: subject.asObservable(),
     reducer
   };
