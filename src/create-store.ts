@@ -1,11 +1,10 @@
-import { Subject, merge, Observable } from "rxjs";
+import { merge, Observable } from "rxjs";
 import {
   map,
   startWith,
-  switchMap,
   scan,
-  tap,
-  shareReplay
+  shareReplay,
+  distinctUntilChanged
 } from "rxjs/operators";
 import { Action } from "./types";
 export * from "./types";
@@ -17,36 +16,33 @@ export function createStore<
   Actions extends { [k: string]: Action<Store, any, any> }
 >(chart: Chart, initialStore: Store, actions: Actions) {
   const chartKeys = Object.keys(chart) as Array<keyof Chart>;
-  const updaters = chartKeys.reduce((acc, chartKey) => {
-    const updater = merge(
-      ...chart[chartKey].map(actionKey =>
-        actions[actionKey].stream.pipe(
-          map(ctx => (store: Store) => actions[actionKey].reducer(store, ctx))
-        )
-      )
-    );
-    acc[chartKey] = updater;
+  const allUpdaters = chartKeys.reduce((acc, chartKey) => {
+    chart[chartKey].forEach(actionKey => {
+      const updater = actions[actionKey].stream.pipe(
+        map(ctx => ({
+          name: actionKey,
+          fn: (store: Store) => actions[actionKey].reducer(store, ctx)
+        }))
+      );
+      if (acc[actionKey] === undefined) {
+        acc[actionKey] = updater;
+      }
+    });
+
     return acc;
-  }, {} as { [k in keyof Chart]: Observable<(s: Store) => Store> });
+  }, {} as { [k in keyof Actions]: Observable<{ name: keyof Actions; fn: (s: Store) => Store }> });
 
-  // Will be triggered each time the state changes.
-  // TODO: should add distinctUntilChanged).
-  const doTransitionSubject = new Subject<any>();
-
-  // Start listen to all the state updaters in the machine's initial state.
-  // Each time the machine state changes, we will switch to the current updater stream.
-  const currentTransitionsStream = doTransitionSubject.pipe(
-    startWith<Observable<(s: Store) => Store>>(updaters[initialStore.state]),
-    switchMap(stream => stream)
+  const mergedUpdaters = merge(
+    ...Object.keys(allUpdaters).map(k => allUpdaters[k])
   );
 
-  const store: Observable<Store> = currentTransitionsStream.pipe(
+  const store: Observable<Store> = mergedUpdaters.pipe(
     startWith<any>(initialStore),
-    scan<(s: Store) => Store, Store>((store, updater) => updater(store)),
-    tap(store => {
-      const currentState = store.state;
-      doTransitionSubject.next(updaters[currentState]);
-    }),
+    scan<{ name: keyof Actions; fn: (s: Store) => Store }, Store>(
+      (store, updater) =>
+        chart[store.state].includes(updater.name) ? updater.fn(store) : store
+    ),
+    distinctUntilChanged((s1, s2) => s1 === s2),
     shareReplay(1)
   );
 

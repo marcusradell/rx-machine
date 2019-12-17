@@ -64,8 +64,8 @@ test("createStore", async () => {
     restart: createAction(restartReducer)
   };
 
-  const initialStore: CountingStore = {
-    state: "counting",
+  const initialStore: StartedStore = {
+    state: "started",
     ctx: 0
   };
 
@@ -77,6 +77,8 @@ test("createStore", async () => {
 
   const result = store.pipe(skip(2), take(1)).toPromise();
   actions.count.act(5);
+  // Should not trigger a state change when in 'counting' state.
+  actions.restart.act();
   actions.end.act();
 
   expect(await result).toEqual({ state: "ended", ctx: 5 });
