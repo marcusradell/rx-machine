@@ -17,20 +17,17 @@ export function createStore<
   Actions extends { [k: string]: Action<Store, any, any> }
 >(chart: Chart, initialStore: Store, actions: Actions) {
   const chartKeys = Object.keys(chart) as Array<keyof Chart>;
-  const updaters = chartKeys.reduce(
-    (acc, chartKey) => {
-      const updater = merge(
-        ...chart[chartKey].map(actionKey =>
-          actions[actionKey].stream.pipe(
-            map(ctx => (store: Store) => actions[actionKey].reducer(store, ctx))
-          )
+  const updaters = chartKeys.reduce((acc, chartKey) => {
+    const updater = merge(
+      ...chart[chartKey].map(actionKey =>
+        actions[actionKey].stream.pipe(
+          map(ctx => (store: Store) => actions[actionKey].reducer(store, ctx))
         )
-      );
-      acc[chartKey] = updater;
-      return acc;
-    },
-    {} as { [k in keyof Chart]: Observable<(s: Store) => Store> }
-  );
+      )
+    );
+    acc[chartKey] = updater;
+    return acc;
+  }, {} as { [k in keyof Chart]: Observable<(s: Store) => Store> });
 
   // Will be triggered each time the state changes.
   // TODO: should add distinctUntilChanged).

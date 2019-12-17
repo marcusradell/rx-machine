@@ -10,7 +10,7 @@ export function useStore<Store>(
   useEffect(() => {
     const subscription = storeStream.subscribe(store => setStore(store));
     return () => subscription.unsubscribe();
-  }, []);
+  }, [storeStream]);
 
   return store;
 }

@@ -1,16 +1,16 @@
-import { createAction } from '../src/create-action';
-import { take } from 'rxjs/operators';
+import { createAction } from "../src/create-action";
+import { take } from "rxjs/operators";
 
-test('createAction', async () => {
+test("createAction", async () => {
   type Store = {
-    state: 'enabled';
+    state: "enabled";
     ctx: string;
   };
 
   const reducer = (s: Store, ctx: string) => ({ ...s, ctx });
   const setValue = createAction(reducer);
   const resultP = setValue.stream.pipe(take(1)).toPromise();
-  setValue.act('Hello!');
+  setValue.act("Hello!");
 
-  expect(await resultP).toEqual('Hello!');
+  expect(await resultP).toEqual("Hello!");
 });

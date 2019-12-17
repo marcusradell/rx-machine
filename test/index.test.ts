@@ -1,55 +1,55 @@
-import { createAction, createStore, CreateAction } from '../src/index';
-import { skip, take } from 'rxjs/operators';
+import { createAction, createStore, CreateAction } from "../src/index";
+import { skip, take } from "rxjs/operators";
 
-test('createStore', async () => {
+test("createStore", async () => {
   type StartedStore = {
-    state: 'started';
+    state: "started";
     ctx: 0;
   };
 
   type CountingStore = {
-    state: 'counting';
+    state: "counting";
     ctx: number;
   };
 
   type EndedStore = {
-    state: 'ended';
+    state: "ended";
     ctx: number;
   };
 
   type Store = StartedStore | CountingStore | EndedStore;
 
   type Chart = {
-    started: ['count'];
-    counting: ['count', 'end'];
-    ended: ['restart'];
+    started: ["count"];
+    counting: ["count", "end"];
+    ended: ["restart"];
   };
 
   const chart: Chart = {
-    started: ['count'],
-    counting: ['count', 'end'],
-    ended: ['restart'],
+    started: ["count"],
+    counting: ["count", "end"],
+    ended: ["restart"]
   };
 
   type CountReducer = (s: Store, toAdd: number) => CountingStore;
 
   const CountReducer: CountReducer = (s, toAdd) => ({
-    state: 'counting',
-    ctx: s.ctx + toAdd,
+    state: "counting",
+    ctx: s.ctx + toAdd
   });
 
   type EndReducer = (s: Store) => EndedStore;
 
   const endReducer: EndReducer = s => ({
     ...s,
-    state: 'ended',
+    state: "ended"
   });
 
   type RestartReducer = (s: Store) => StartedStore;
 
   const restartReducer: RestartReducer = _ => ({
-    state: 'started',
-    ctx: 0,
+    state: "started",
+    ctx: 0
   });
 
   type Actions = {
@@ -61,12 +61,12 @@ test('createStore', async () => {
   const actions: Actions = {
     count: createAction(CountReducer),
     end: createAction(endReducer),
-    restart: createAction(restartReducer),
+    restart: createAction(restartReducer)
   };
 
   const initialStore: CountingStore = {
-    state: 'counting',
-    ctx: 0,
+    state: "counting",
+    ctx: 0
   };
 
   const store = createStore<Chart, Store, Actions>(
@@ -79,5 +79,5 @@ test('createStore', async () => {
   actions.count.act(5);
   actions.end.act();
 
-  expect(await result).toEqual({ state: 'ended', ctx: 5 });
+  expect(await result).toEqual({ state: "ended", ctx: 5 });
 });
